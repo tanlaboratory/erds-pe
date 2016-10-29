@@ -90,6 +90,18 @@ usage: python erds_pe.py <COMMAND> [OPTIONS]
 
 #Quick Start & a example
 
+1. Getting RD and transformming to RPKM format
+
+	This command is to extract the read depth (RD) signal from the BAM files and to calculate RPKM values for all samples. 
+
+		usage: python erds_pe.py rpkm [OPTIONS] 
+
+		--target  <FILE>  Target region file in bed format (required)
+
+		--input   <FILE>  A list of bam files list. eg. bam_list_example.txt (required)
+
+		--output  <FILE>  Directory for RPKM files (required)
+		
 1. Step 1:
 
 	python erds_pe.py rpkm
