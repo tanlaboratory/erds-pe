@@ -1,7 +1,6 @@
 import numpy as np
 import pysam
 import pdb
-import bx.bbi.bigwig_file
 import sys
 import os
 
