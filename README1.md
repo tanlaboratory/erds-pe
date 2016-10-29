@@ -91,29 +91,29 @@ usage: python erds_pe.py <COMMAND> [OPTIONS]
 #Quick Start & a example
 
 1. Step 1:
-	python erds_pe.py rpkm \
-	--input $bamlist_file \
-	--target $target_file \
+	python erds_pe.py rpkm
+	--input $bamlist_file
+	--target $target_file
 	--output $rpkm_files
 	
 2. Step 2:
-	python erds_pe.py merge_rpkm \
-	--rpkm_dir $rpkm_files \
+	python erds_pe.py merge_rpkm
+	--rpkm_dir $rpkm_files
 	--target $target_file
 	
 3. Step 3:
-	python erds_pe.py svd \
+	python erds_pe.py svd
 	--rpkm_matrix $RPKM_matrix.raw.filtered
 
 4. Step 4:	
-	python erds_exome.py discover \
-	--params params.txt \
-	--datafile $RPKM_matrix.raw.filtered.SVD \
-	--sample NA12878 \
-	--vcf=$snv_vcf_file \
-	--hetsnp True \
-	--tagsnp Ture \
-	--tagsnp_file=$tagsnp_file \
+	python erds_exome.py discover
+	--params params.txt
+	--datafile $RPKM_matrix.raw.filtered.SVD
+	--sample NA12878
+	--vcf=$snv_vcf_file
+	--hetsnp True
+	--tagsnp Ture
+	--tagsnp_file=$tagsnp_file
 	--output NA12878.pooled.Het.Tag.cnv
   
 #Contact
