@@ -93,9 +93,9 @@ usage: python erds_pe.py <COMMAND> [OPTIONS]
 1. Step 1:
 
 	python erds_pe.py rpkm
-	--input $bamlist_file
-	--target $target_file
-	--output $rpkm_files
+	input $bamlist_file
+	target $target_file
+	output $rpkm_files
 	
 2. Step 2:
 
@@ -111,7 +111,7 @@ usage: python erds_pe.py <COMMAND> [OPTIONS]
 4. Step 4:
 
 	python erds_exome.py discover
-	--params params.txt
+	params params.txt
 	--datafile $RPKM_matrix.raw.filtered.SVD
 	--sample NA12878
 	--vcf=$snv_vcf_file
