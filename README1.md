@@ -1,80 +1,80 @@
-#TrioCNV
+#ERDS-pe
 #Introduction
-TrioCNV is a tool designed to jointly detecting CNVs from WGS data in parent-offspring trios. It models read depth signal with the negative binomial regression to accommodate over-dispersion and considered GC content and mappability bias. It leverages parent-offspring relationship to apply Mendelian inheritance constraint while allowing for the rare incidence of de novo events. It uses a hidden Markov model (HMM) by combining the two aforementioned models to jointly perform CNV segmentation for the trio.
+ERDS-pe is a tool designed to detect detect CNVs from whole-exome sequencing (WES) data. ERDS-pe employs RPKM and principal component analysis to normalize WES data and incorporates RD and single-nucleotide variation information together as a hybrid signal into a paired hidden Markov model to infer CNVs from WES data.
 #Installation
-If you want to run TrioCNV, you'll need:
+ERDS-pe is easy to run. you just need:
 
-1. Java 1.7+
+1. Python 2.7+ (Python 3 is not yet supported)
 
-2. Apache Maven (if you want to build the source)
+2. Numpy, PyVCF, Pysam libraries installed.
 
-3. R (Rscript exectuable must be set in the PATH environment variable)
+3. Target(Probe) files in bed format.
 
-4. Runiversal package(http://cran.rproject.org/web/packages/Runiversal/index.html) in R environment
-
-5. The easiest way to get TrioCNV is to download the binary distribution from the TrioCNV github release page. Alternatively, you can build TrioCNV from source with Maven. 
-
-	git clone --recursive https://github.com/yongzhuang/TrioCNV.git
-	
-	cd TrioCNV/
-	
-	mvn clean install -Dmaven.compiler.source=1.7 -Dmaven.compiler.target=1.7
 
 #Running 
 
-usage: java -jar TrioCNV.jar <COMMAND> [OPTIONS] 
+usage: python erds_pe.py <COMMAND> [OPTIONS] 
 
-1. preprocess 
+1. Getting RD and transformming to RPKM format
 
-	This command is to extract the information from the BAM file. 
+	This command is to extract the read depth (RD) signal from the BAM files and to calculate RPKM values for all samples. 
 
-		usage: java -jar TrioCNV.jar preprocess [OPTIONS] 
+		usage: python erds_pe.py rpkm [OPTIONS] 
 
-		-R,--reference  <FILE>  reference genome file (required)
+		--target  <FILE>  Target region file in bed format (required)
 
-		-B,--bams       <FILE>  bam list file (required)
+		--input   <FILE>  A list of bam files list. eg. bam_list_example.txt (required)
 
-		-P,--pedigree   <FILE>  pedigree file (required)
+		--output  <FILE>  Directory for RPKM files (required)
+		
 
-		-M,--mappability        <FILE>  mappability file (required)
+2. Merge single sample RPKM files to a union data matrix
 
-		-O,--output     <FILE>  perfix of output file (required)
+		usage: python erds_pe.py merge_rpkm [OPTIONS] 
 
-		   --window     <INT>   window size (optional, default 200)
-		   
-		   --min_mapping_quality        <INT>   minumum mapping quality (optional,default 0)
+		--rpkm_dir  <FILE>  Giving the RPKM files directory for taking data (required)
 
-2. call 
+		--target   <FILE>  Target region file in bed format (required)
 
-	This command is to jointly call CNVs from a parent-offspring trio.
+		--output  <FILE>  Output the data matrix file (optional)
+		
+		
+3. Normalization
 
-		usage: java -jar TrioCNV.jar call [OPTIONS] 
+	This command is to normalize RPKM data matrix using principal component analysis.
+	
+		usage: python erds_pe.py svd [OPTIONS] 
 
-		-I,--input      <FILE>  read count file got by the preprocess step (required)
+		--rpkm_matrix  <FILE>  Giving the RPKM files PCA normalization (required)
 
-		-P,--pedigree   <FILE>  pedigree file (required)
+		--output  <FILE>  Output the normalized data matrix file (optional)
+		
+2. Calling CNVs 
 
-		-M,--mappability        <FILE>  mappability file (required)
+	This command is to call CNVs from pooled whole-exome sequencing samples.
 
-		-O,--output     <FILE>  output structural variation file (required)
+		usage: python erds_pe.py discover [OPTIONS]  
 
-		   --min_mappability    <FLOAT> minumum mappability(optional, default 0)
-		   
-		   --mutation_rate      <FLOAT> de novo mutation rate (optional, default 0.0001)
-		   
-		   --transition_prob    <FLOAT> probability of transition between two different copy number states(optional, default 0.00001)
-		   
-		   --outlier	<FLOAT>	the predefined percentage of outliers (optional, default 0.025)
-		   
-		   --min_distance       <INT>   minumum distance to merge two adjacent CNVs (optional, default 10K)
-		   
-		   --nt <INT>   number of threads (optional, default 1)
-		   
-		   --gc_bin_size	<INT>	size of gc bin by percent (optional, default 1)
+		--params  <FILE>  Parameters files for HMM (required)
+
+		--datafile  <FILE>  Normalized data matrix file (required)
+		
+		--output  <FILE>  Output the normalized data matrix file (optional)
+		
+		--sample  <STRING>  Giving a specific sample for calling (optional)
+
+		--vcf  <FILE>  Taking SNV information from vcf file (optional)
+		
+			--hetsnp  <BOOL>  Using or not take heterogenous SNV information into HMM (optional, default FALSE)
+		
+			--tagsnp  <BOOL>  Using or not take tagSNP-copy number polymorphism information into HMM (optional, default FALSE)
+
+		--tagsnp_file  <FILE>  A file records the linkage disequilibrium information between tagSNP and copy number polymorphism (optional)
+
 
 #File Instruction
 
-1. bam list file (one columns) 
+1. bam list file (three columns) 
 
 	Column 1: path of .bam file
 
