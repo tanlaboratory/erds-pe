@@ -55,7 +55,7 @@ usage: python erds_pe.py <COMMAND> [OPTIONS]
 
 		usage: python erds_pe.py discover [OPTIONS]  
 
-		--params  <FILE>  Parameters files for HMM (required)
+		--params  <FILE>  Parameters file for HMM (required)
 
 		--datafile  <FILE>  Normalized data matrix file (required)
 		
@@ -76,23 +76,45 @@ usage: python erds_pe.py <COMMAND> [OPTIONS]
 
 1. bam list file (three columns) 
 
-	Column 1: path of .bam file
+	Column 1: Sample_name
+	Column 2: Path of bam files
+	Column 3: The population of the corresponding sample. e.g CEU, YRI, CHB etc.
 
 	Example: 
 
-		/path/Sample1.bam
-
-		/path/Sample2.bam
-
-		/path/Sample3.bam
+		NA06984	/data/rjtan/1000GP/exome/NA06984.mapped.ILLUMINA.bwa.CEU.exome.20120522.bam	CEU
+		NA06985	/data/rjtan/1000GP/exome/NA06985.mapped.ILLUMINA.bwa.CEU.exome.20130415.bam	CEU
+		NA06994	/data/rjtan/1000GP/exome/NA06994.mapped.ILLUMINA.bwa.CEU.exome.20120522.bam	CEU
+		NA07000	/data/rjtan/1000GP/exome/NA07000.mapped.ILLUMINA.bwa.CEU.exome.20130415.bam	CEU
 		...
 
-2. pedigree file
+#Quick Start & a example
 
-	See (http://pngu.mgh.harvard.edu/~purcell/plink/data.shtml)
+1. Step 1:
+	python erds_pe.py rpkm \
+	--input $bamlist_file \
+	--target $target_file \
+	--output $rpkm_files
+	
+2. Step 2:
+	python erds_pe.py merge_rpkm \
+	--rpkm_dir $rpkm_files \
+	--target $target_file
+	
+3. Step 3:
+	python erds_pe.py svd \
+	--rpkm_matrix $RPKM_matrix.raw.filtered
 
-	Note: The Individual ID must be same as the @RG SM tag of the bam file.
-
-
+4. Step 4:	
+	python erds_exome.py discover \
+	--params params.txt \
+	--datafile $RPKM_matrix.raw.filtered.SVD \
+	--sample NA12878 \
+	--vcf=$snv_vcf_file \
+	--hetsnp True \
+	--tagsnp Ture \
+	--tagsnp_file=$tagsnp_file \
+	--output NA12878.pooled.Het.Tag.cnv
+  
 #Contact
 <renjie.tan@outlook.com>
