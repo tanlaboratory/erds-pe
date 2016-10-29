@@ -95,4 +95,4 @@ usage: python erds_pe.py <COMMAND> [OPTIONS]
 
 
 #Contact
-<yzhuangliu@gmail.com>
+<renjie.tan@outlook.com>
